@@ -1,0 +1,17 @@
+[
+    {
+        "name": "david",
+        "id":213789,
+        "address": "jerusalem"
+    },
+    {
+        "name": "moshe",
+        "id":656567,
+        "address": "bnei brak"
+    },
+    {
+        "name": "avram",
+        "id":454346,
+        "address": "tel aviv"
+    }
+]
