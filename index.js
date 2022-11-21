@@ -3,7 +3,15 @@ const fs = require('fs')
 const factorial = require('./files/factorial')
 const prime = require('./files/prime')
 
-const server = http.createServer((req, res) => {
+const hendelRequset = (path, type, req, res) => {
+    fs.readFile(path, function (err, data) {
+        res.writeHead(200, { 'Content-Type': type });
+        res.write(data);
+        return res.end();
+    });
+}
+
+const server = http.createServer(async (req, res) => {
     const { url } = req;
     const urlSplit = url.split('/')
     if (urlSplit) {
@@ -11,51 +19,26 @@ const server = http.createServer((req, res) => {
             case 'pages':
                 switch (urlSplit[2]) {
                     case 'sports':
-                        fs.readFile('./files/sports.html', function (err, data) {
-                            res.writeHead(200, { 'Content-Type': 'text/html' });
-                            res.write(data);
-                            return res.end();
-                        });
+                        hendelRequset('./files/sports.html', 'text/html', req, res)
                         break;
                     case 'about':
-                        fs.readFile('./files/about.html', function (err, data) {
-                            res.writeHead(200, { 'Content-Type': 'text/html' });
-                            res.write(data);
-                            return res.end();
-                        });
+                        hendelRequset('./files/about.html', 'text/html', req, res)
                         break;
-                        fs.readFile('./files/pages.html', function (err, data) {
-                            res.writeHead(200, { 'Content-Type': 'text/html' });
-                            res.write(data);
-                            return res.end();
-                        });
                     default:
-                        break;
+                        hendelRequset('./files/pages.html', 'text/html', req, res)
                 }
                 break;
 
             case 'files':
                 switch (urlSplit[2]) {
                     case 'shops':
-                        fs.readFile('./files/shops.txt', function (err, data) {
-                            res.writeHead(200, { 'Content-Type': 'text/txt' });
-                            res.write(data);
-                            return res.end();
-                        });
+                        hendelRequset('./files/shops.txt', 'text/txt', req, res)
                         break;
                     case 'people':
-                        fs.readFile('./files/people.txt', function (err, data) {
-                            res.writeHead(200, { 'Content-Type': 'text/txt' });
-                            res.write(data);
-                            return res.end();
-                        });
+                        hendelRequset('./files/people.txt', 'text/txt', req, res)
                         break;
                     default:
-                        fs.readFile('./files/files.html', function (err, data) {
-                            res.writeHead(200, { 'Content-Type': 'text/html' });
-                            res.write(data);
-                            return res.end();
-                        });
+                        hendelRequset('./files/files.html', 'text/html', req, res)
                         break;
                 }
                 break;
@@ -75,11 +58,7 @@ const server = http.createServer((req, res) => {
                         return res.end();
                     });
                 } else {
-                    fs.readFile('./files/contacts.json', function (err, data) {
-                        res.writeHead(200, { 'Content-Type': 'text/json' });
-                        res.write(data);
-                        return res.end();
-                    });
+                    hendelRequset('./files/contacts.json', 'text/json', req, res)
                 }
                 break;
             case 'comps':
@@ -87,28 +66,29 @@ const server = http.createServer((req, res) => {
                 if (urlSplit[2] === 'factorial') {
                     console.log('factorial');
 
-                    console.log(factorial(urlSplit[3]));
+                    const data = factorial(urlSplit[3]);
+                    console.log(data);
+                    res.write(`<h1>${data.toString()}</h1>`);
                     return res.end();
                 }
-                // else if (urlSplit[2] === prime) {
-                //     fs.readFile('./files/comps.html', function (err, data) {
-                //         res.writeHead(200, { 'Content-Type': 'text/html' });
-                //         res.write(data);
-                //         return res.end();
-                //     })
-                // }
+
+                else if (urlSplit[2] === 'prime') {
+                    console.log('prime');
+                    const data = prime(urlSplit[3])
+
+                    res.write(`<h1>${data.toString()}</h1>`);
+                    return res.end();
+                }
                 break;
             default:
                 console.log(url, urlSplit);
-                fs.readFile('./files/error.html', function (err, data) {
-                    res.writeHead(200, { 'Content-Type': 'text/html' });
-                    res.write(data);
-                    return res.end();
-                });
+                hendelRequset('./files/error.html', 'text/html', req, res)
                 break;
         }
     }
 
 })
+
+
 
 server.listen(3000)
